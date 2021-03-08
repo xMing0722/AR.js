@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+
+#info {
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+  color: #ffff00
+}
+
+#comment{
+  position: absolute;
+  top: 20px;
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+  color: #ffff00
+}
+
+body {
+  overflow: hidden;
+}
+
+</style>
+</head>
+
+<body>
+<div id="info">HW0.js</div>
+<div id="comment">press any key to start/stop the train.</div>
+<script src="https://threejs.org/build/three.min.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js">
+</script>
+
+<script>
+var camera, scene, renderer;
+var train;
+var angle = 1.57079;
+var time = 0;
+var clock;
+var flag = true;
+
+init();
+animate();
+
+function init() {
+	
+	window.addEventListener('keydown', function(toggle){
+		if(flag){
+			flag = false;
+		}
+		else{
+			flag = true;
+		}
+	}, false);
+
+  scene = new THREE.Scene();
+  clock = new THREE.Clock();
+  renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x888888);
+  document.body.appendChild(renderer.domElement);
+
+  camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+  camera.position.z = 500;
+  
+  train = new THREE.Mesh(new THREE.BoxGeometry(10, 10, 30), new THREE.MeshNormalMaterial());
+  let controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+  ////////////////////////////////////////////////////////////////
+  var gridXZ = new THREE.GridHelper(400, 20, 'red', 'white');
+  train.position.set(100,5,-50);
+  scene.add(gridXZ);
+  scene.add(train);
+
+}
+
+function animate() {
+  var radius = 50, dis = -1;
+
+  /*train.rotation.y = angle;
+  
+  var dt = clock.getDelta();
+  
+  angle += 5 * 0.10472 * dt;*/
+  
+  
+  
+  if(flag==true){
+    	
+      if(time <= 400){
+        var x = train.position.x+(0.5*dis);
+        train.rotation.y = angle = 1.57079;
+        train.position.set(x,5,-50);
+        time++;
+        
+      }else if(time <=600 && time >400){
+        train.position.set((radius*Math.cos(angle))-100 ,5 ,-radius*Math.sin(angle));
+        train.rotation.y = angle;
+        angle += 0.031415926/2;
+        time++;
+      }else if(time <=1000 && time >600){
+        var x = train.position.x-(0.5*dis);
+        train.rotation.y = angle = 1.57079;
+        train.position.set(x,5,50);
+        time++;
+      }else if(time <=1200 && time >1000){
+        train.position.set((-radius*Math.cos(angle))+100 ,5 ,radius*Math.sin(angle));
+        train.rotation.y = angle;
+        angle += 0.031415926/2;
+        time++;
+      }
+      else if(time > 1200){
+       time = 0;
+      }
+    
+    }
+  requestAnimationFrame(animate);
+  render();
+
+}
+
+function render() {
+
+  renderer.render(scene, camera);
+
+}
+</script>
+</body>
+</html>
