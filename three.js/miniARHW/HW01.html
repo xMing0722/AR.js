@@ -152,13 +152,13 @@ function animate() {
 	theta += 0.01;
 	markerHiro.children[0].position.set (0.5*Math.sin(theta), 0.1, 0.5*Math.cos(theta));
 	
-	if(Math.sin(theta) <= 0){
+	if(Math.sin(theta) < 0){
 		count -= 0.1;
 	}
 	else{
-		count += 0.1
+		count += 0.1;
 	}
-	mbm.color.setHSL(0, count, 0.5);
+	mbm.color.setHSL(0.5, count, 0.5);
 	markerHiro.children[1].position.set(0, 0.7 + 0.5 * Math.sin(theta), 0);
 	
 	renderer.render (scene, camera);	
