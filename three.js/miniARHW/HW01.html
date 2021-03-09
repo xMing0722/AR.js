@@ -27,6 +27,7 @@ var markerHiro;
 
 var theta = 0;
 var count = 0;
+var pos, pos2;
 var color;
 var mbm = new THREE.MeshBasicMaterial();
 
@@ -150,16 +151,18 @@ function animate() {
 	arToolkitContext.update( arToolkitSource.domElement )
 
 	theta += 0.01;
+	pos = markerHiro.children[1].position.y;
 	markerHiro.children[0].position.set (0.5*Math.sin(theta), 0.1, 0.5*Math.cos(theta));
 	
-	if(Math.sin(theta) < 0){
+	if(pos < pos2){
 		count -= 0.01;
 	}
 	else {
 		count += 0.01;
 	}
-	mbm.color.setHSL(0.5, count, 0.5);
+	mbm.color.setHSL(0, count, 0);
 	markerHiro.children[1].position.set(0, 0.7 + 0.5 * Math.sin(theta), 0);
+	pos2 = markerHiro.children[1].position.y;
 	
 	renderer.render (scene, camera);	
 }
