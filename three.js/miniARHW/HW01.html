@@ -142,7 +142,7 @@ function animate() {
 	if( arToolkitSource.ready === false )	return
 	arToolkitContext.update( arToolkitSource.domElement )
 
-	theta += 0.005;
+	theta += 0.0075;
 	markerHiro.children[0].position.set (0.5*Math.sin(theta), 0.1, 0.5*Math.cos(theta));
 	markerHiro.children[1].position.set(0, 0.7 + 0.5 * Math.sin(theta), 0);
 	
