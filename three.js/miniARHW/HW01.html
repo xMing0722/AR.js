@@ -151,15 +151,15 @@ function animate() {
 
 	theta += 0.01;
 	count = theta;
-	if(count > 1.0){
-		count = 0;
-	}
 	markerHiro.children[0].position.set (0.5*Math.sin(theta), 0.1, 0.5*Math.cos(theta));
 	if(Math.sin(theta) <= 0){
 		mbm.color.setHSL(0, count, 0.5);
 	}
 	else{
 		mbm.color.setHSL(0, count, 0);
+	}
+	if(count > 1.0){
+		count = 0;
 	}
 	markerHiro.children[1].position.set(0, 0.7 + 0.5 * Math.sin(theta), 0);
 	
