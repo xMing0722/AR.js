@@ -159,11 +159,11 @@ function animate() {
 	
 	pos2 = markerHiro.children[1].position.y;
 	
-	if(pos < pos2){
-		count -= 0.01;
+	if(pos > pos2){
+		count -= 0.001;
 	}
 	else {
-		count += 0.01;
+		count += 0.001;
 	}
 	if(count < 0){
 		count = 0;
