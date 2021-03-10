@@ -152,7 +152,12 @@ function animate() {
 
 	theta += 0.01;
 	pos = markerHiro.children[1].position.y;
-	markerHiro.children[0].position.set (0.5*Math.sin(theta), 0.1, 0.5*Math.cos(theta));
+	markerHiro.children[0].position.set (0.5 * Math.sin(theta), 0.1, 0.5 * Math.cos(theta));
+	
+	mbm.color.setHSL(0.5, count, 0.5);
+	markerHiro.children[1].position.set(0, 0.7 + 0.5 * Math.sin(theta), 0);
+	
+	pos2 = markerHiro.children[1].position.y;
 	
 	if(pos < pos2){
 		count -= 0.01;
@@ -160,9 +165,9 @@ function animate() {
 	else {
 		count += 0.01;
 	}
-	mbm.color.setHSL(0.5, count, 0.5);
-	markerHiro.children[1].position.set(0, 0.7 + 0.5 * Math.sin(theta), 0);
-	pos2 = markerHiro.children[1].position.y;
+	if(count < 0){
+		count = 0;
+	}
 	
 	renderer.render (scene, camera);	
 }

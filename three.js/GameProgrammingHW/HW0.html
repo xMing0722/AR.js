@@ -1,21 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title> GameDesign HW0 </title>
+<title> GameProgramming HW0 </title>
 <style>
 
 #info {
   position: absolute;
   top: 0px;
-  width: 100%;
-  padding: 10px;
-  text-align: center;
-  color: #ffff00
-}
-
-#comment{
-  position: absolute;
-  top: 20px;
   width: 100%;
   padding: 10px;
   text-align: center;
@@ -30,15 +21,16 @@ body {
 </head>
 
 <body>
-<div id="info">GameDesign HW0</div>
-<div id="comment">Press any key to make the block keep/stop moving.</div>
+<div id="info">GameProgramming HW0 <br>
+<button id="train_toggle">Press to make the train keep/stop moving.</button>
+</div>
 <script src="https://threejs.org/build/three.min.js"></script>
-<script src="https://threejs.org/examples/js/controls/OrbitControls.js">
-</script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 
 <script>
 var camera, scene, renderer;
-var train;
+var train, chimey, tbody;
 var angle = 1.57079;
 var time = 0;
 var clock;
@@ -47,16 +39,11 @@ var flag = true;
 init();
 animate();
 
+$("#train_toggle").click(function(){
+	flag = !flag;
+});
+
 function init() {
-	
-	window.addEventListener('keydown', function(toggle){
-		if(flag){
-			flag = false;
-		}
-		else{
-			flag = true;
-		}
-	}, false);
 
   scene = new THREE.Scene();
   clock = new THREE.Clock();
@@ -68,12 +55,17 @@ function init() {
   camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
   camera.position.z = 500;
   
-  train = new THREE.Mesh(new THREE.BoxGeometry(10, 10, 30), new THREE.MeshNormalMaterial());
+  train = new THREE.Group();
+  tbody = new THREE.Mesh(new THREE.BoxGeometry(10, 10, 30), new THREE.MeshNormalMaterial());
+  chimey = new THREE.Mesh(new THREE.CylinderGeometry(4, 4, 20, 12), new THREE.MeshNormalMaterial());
+  chimey.position.z = -10;
+  chimey.position.y = 4;
+  train.add(tbody, chimey);
   let controls = new THREE.OrbitControls(camera, renderer.domElement);
 
   ////////////////////////////////////////////////////////////////
   var gridXZ = new THREE.GridHelper(400, 20, 'red', 'white');
-  train.position.set(100,5,-50);
+  train.position.set(100,5,-60);
   scene.add(gridXZ);
   scene.add(train);
 
@@ -92,29 +84,29 @@ function animate() {
   
   if(flag==true){
     	
-      if(time <= 400){
-        var x = train.position.x+(0.5*dis);
+      if(time <= 97){
+        var x = train.position.x+(3.07693*2/3*dis);
         train.rotation.y = angle = 1.57079;
         train.position.set(x,5,-50);
         time++;
         
-      }else if(time <=600 && time >400){
+      }else if(time <= 173 && time > 97){
         train.position.set((radius*Math.cos(angle))-100 ,5 ,-radius*Math.sin(angle));
         train.rotation.y = angle;
-        angle += 0.031415926/2;
+        angle += 0.031415926*4/3;
         time++;
-      }else if(time <=1000 && time >600){
-        var x = train.position.x-(0.5*dis);
-        train.rotation.y = angle = 1.57079;
+      }else if(time <= 270 && time > 173){
+        var x = train.position.x-(3.07693*2/3*dis);
+        train.rotation.y = angle = 4.71237;
         train.position.set(x,5,50);
         time++;
-      }else if(time <=1200 && time >1000){
-        train.position.set((-radius*Math.cos(angle))+100 ,5 ,radius*Math.sin(angle));
+      }else if(time <= 345 && time > 270){
+        train.position.set((radius*Math.cos(angle))+100 ,5 ,-radius*Math.sin(angle));
         train.rotation.y = angle;
-        angle += 0.031415926/2;
+        angle += 0.031415926*4/3;
         time++;
       }
-      else if(time > 1200){
+      else if(time > 345){
        time = 0;
       }
     
