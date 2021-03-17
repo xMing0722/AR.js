@@ -174,7 +174,13 @@ function addMarkerHiro(){
 	markerRoot.add (grid);
 			
 	return markerRoot;
-}	
+}
+
+function clamp (x, xLo, xHi) {
+  if (x < xLo) return xLo;
+  if (x > xHi) return xHi;
+  else return x;
+}
 
 function animate() {
 	requestAnimationFrame (animate);
