@@ -27,7 +27,11 @@
 <script>
 
 // global variables
-var camera, scene, renderer;
+var renderer, scene, camera;
+var stats;
+var arToolKitSource, arToolKitContext;
+var markerHiro;
+
 var angle = 0;
 var group,group2;
 var isActive = false;
@@ -143,6 +147,8 @@ function init() {
     stick.position.set(0,0.5,-20);
     group2.add(stick);
 	
+	markerHiro = addMarketHiro();
+	scene.add(markerHiro);
 }
 	
 function addMarkerHiro(){
