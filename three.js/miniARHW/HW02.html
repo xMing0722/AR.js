@@ -141,9 +141,9 @@ function init() {
     let geometry4 = new THREE.BoxGeometry(0.1, 0.1, 1);
 	let material4 = new THREE.MeshBasicMaterial( {color: 0x000000} );
     let stick = new THREE.Mesh( geometry4, material4 );
-    stick.position.set(0.5,0.5,-0.5);
+    stick.position.set(0.1,0.1,-0.1);
     group2.add(stick);
-	group2.position.set(0.5, 0.5, -0.5)
+	group2.position.set(0.1, 0.1, -0.1)
 	
 	markerHiro = addMarkerHiro();
 	scene.add(markerHiro);
