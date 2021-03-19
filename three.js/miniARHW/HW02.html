@@ -120,19 +120,19 @@ function init() {
     group2 = new THREE.Group();
     scene.add (group2);
    
-	let geometry0 = new THREE.CircleGeometry(1.5, 32, Math.PI/2, 2*Math.PI/3);
+	let geometry0 = new THREE.CircleGeometry(1.3, 32, Math.PI/2, 2*Math.PI/3);
 	let material0 = new THREE.MeshBasicMaterial( { color: 0xffff00, side: THREE.DoubleSide} );
 	let circle0 = new THREE.Mesh( geometry0, material0 );
 	circle0.rotateX(90* Math.PI / 180);
 	group.add( circle0 );  
 
-	let geometry1 = new THREE.CircleGeometry(1.5, 32, Math.PI/2 + 2/3*Math.PI, 2*Math.PI/3);
+	let geometry1 = new THREE.CircleGeometry(1.3, 32, Math.PI/2 + 2/3*Math.PI, 2*Math.PI/3);
 	let material1 = new THREE.MeshBasicMaterial( { color: 0xff0000 , side: THREE.DoubleSide} );
 	let circle1 = new THREE.Mesh( geometry1, material1 );
 	circle1.rotateX(90* Math.PI / 180);
 	group.add( circle1 );  
    
-	let geometry2 = new THREE.CircleGeometry(1.5, 32, Math.PI/2 - 2/3*Math.PI, 2*Math.PI/3);
+	let geometry2 = new THREE.CircleGeometry(1.3, 32, Math.PI/2 - 2/3*Math.PI, 2*Math.PI/3);
 	let material2 = new THREE.MeshBasicMaterial( { color: 0x00ffff ,side: THREE.DoubleSide} );
 	let circle2 = new THREE.Mesh( geometry2, material2 );
 	circle2.rotateX(90* Math.PI / 180);
@@ -141,9 +141,9 @@ function init() {
     let geometry4 = new THREE.BoxGeometry(0.1, 0.1, 0.5);
 	let material4 = new THREE.MeshBasicMaterial( {color: 0xffffff} );
     let stick = new THREE.Mesh( geometry4, material4 );
-    stick.position.set(0,0.1,-0.666);
+    stick.position.set(0,0.1,-0.65);
     group2.add(stick);
-	group2.position.set(0, 0.1, -0.666)
+	group2.position.set(0, 0.1, -0.65)
 	
 	markerHiro = addMarkerHiro();
 	scene.add(markerHiro);
