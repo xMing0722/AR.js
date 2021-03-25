@@ -27,12 +27,13 @@ body {
 <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <audio id="sound" style = "display: none;">
-<source src = "audio/ZA_WARUDO.mp3" type='audio/mp3'>
+<source src = "audio/sound.mp3" type='audio/mp3'>
 </audio>
 
 <script>
 var camera, scene, renderer;
 var pucks = [];
+var walls = [];
 var sound;
 const Radius = 10;
 
@@ -76,7 +77,7 @@ class Puck{
 				pucks[i].vel.sub(v2_2);
 				
 				let D = 2 * Radius - ballHitCheck2;
-				v2_1.multiplyScalar(D / 2);
+				v2_1.multiplyScalar(D / 2).normalize();
 				this.pos.sub(v2_1);
 				pucks[i].pos.add(v2_1);
 				
@@ -114,11 +115,30 @@ class Puck{
 	}
 }
 
+class Wall{
+
+	constructor(posx, posy, posz, rotateBox, mesh){
+		this.posx = posx;
+		this.posy = posy;
+		this.posz = posz;
+		this.mesh = mesh;
+		this.rotateBox = rotateBox;
+		this.mesh.position.set(this.posx, this.posy, this.posz);
+		this.mesh.rotateY(this.rotateBox);
+		scene.add(this.mesh);
+	}
+}
+
 	
 function createBallMesh(color){
-	let ballMesh = new THREE.Mesh(new THREE.CylinderGeometry(Radius, Radius, 4, 20), new THREE.MeshBasicMaterial());
+	let ballMesh = new THREE.Mesh(new THREE.CylinderGeometry(Radius, Radius, 4, 20), new THREE.MeshPhongMaterial());
 	ballMesh.material.color = color;
 	return ballMesh;
+}
+
+function createWallMesh(){
+	let wallMesh0 = new THREE.Mesh(new THREE.BoxGeometry(400, 50, 10), new THREE.MeshPhongMaterial({color:"#CCCCCC", transparent: true, opacity: 0.4}));
+	return wallMesh0;
 }
 
 init();
@@ -140,28 +160,41 @@ function init() {
   ////////////////////////////////////////////////////////////////
   //var gridXZ = new THREE.GridHelper(400, 20, 'red', 'white');
   //scene.add(gridXZ);
+   let wallMesh = createWallMesh();
+   
+   let ew = new Wall(200, 25, 0, Math.PI/2, wallMesh);
+   walls.push(ew);
+   
+   wallMesh = createWallMesh();
+   let sw = new Wall(0, 25, 200, 0, wallMesh);
+   walls.push(sw);
+   
+   wallMesh = createWallMesh();
+   let ww = new Wall(-200, 25, 0, Math.PI/2, wallMesh);
+   walls.push(ww);
+   
+   wallMesh = createWallMesh();
+   let nw = new Wall(0, 25, -200, 0, wallMesh);
+   walls.push(nw);
   
-  var EastWall = new THREE.Mesh(new THREE.BoxGeometry(400, 50, 10), new THREE.MeshBasicMaterial( {color:"#CCCCCC", transparent: true, opacity: 0.4} ));
-  var SouthWall = new THREE.Mesh(new THREE.BoxGeometry(400, 50, 10), new THREE.MeshBasicMaterial( {color:"#CCCCCC", transparent: true, opacity: 0.4} ));
-  var WestWall = new THREE.Mesh(new THREE.BoxGeometry(400, 50, 10), new THREE.MeshBasicMaterial( {color:"#CCCCCC", transparent: true, opacity: 0.4} ));
-  var NorthWall = new THREE.Mesh(new THREE.BoxGeometry(400, 50, 10), new THREE.MeshBasicMaterial( {color:"#CCCCCC", transparent: true, opacity: 0.4} ));
+  //var EastWall = new THREE.Mesh(new THREE.BoxGeometry(400, 50, 10), new THREE.MeshBasicMaterial( {color:"#CCCCCC", transparent: true, opacity: 0.4} ));
+  //var SouthWall = new THREE.Mesh(new THREE.BoxGeometry(400, 50, 10), new THREE.MeshBasicMaterial( {color:"#CCCCCC", transparent: true, opacity: 0.4} ));
+  //var WestWall = new THREE.Mesh(new THREE.BoxGeometry(400, 50, 10), new THREE.MeshBasicMaterial( {color:"#CCCCCC", transparent: true, opacity: 0.4} ));
+  //var NorthWall = new THREE.Mesh(new THREE.BoxGeometry(400, 50, 10), new THREE.MeshBasicMaterial( {color:"#CCCCCC", transparent: true, opacity: 0.4} ));
   var floor = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.MeshPhongMaterial( {color:"gray", side: THREE.DoubleSide}));
-  EastWall.rotateY(Math.PI/2);
-  WestWall.rotateY(Math.PI/2);
+  //EastWall.rotateY(Math.PI/2);
+  //WestWall.rotateY(Math.PI/2);
   floor.rotation.x = -Math.PI/2;
-  EastWall.position.set(200, 25, 0);
-  SouthWall.position.set(0, 25, 200);
-  WestWall.position.set(-200, 25, 0);
-  NorthWall.position.set(0, 25, -200);
+  //EastWall.position.set(200, 25, 0);
+  //SouthWall.position.set(0, 25, 200);
+  //WestWall.position.set(-200, 25, 0);
+  //NorthWall.position.set(0, 25, -200);
   
-  scene.add(EastWall);
-  scene.add(SouthWall);
-  scene.add(WestWall);
-  scene.add(NorthWall);
   scene.add(floor);
   
+  
   let ballMesh = createBallMesh (new THREE.Color().setHSL (Math.random(), .9, .4));
-  let puck0 = new Puck (new THREE.Vector3(200,2,250), new THREE.Vector3(-40,0,0), ballMesh);
+  let puck0 = new Puck (new THREE.Vector3(200,2,250), new THREE.Vector3(-40,0,60), ballMesh);
   pucks.push(puck0);
   
   ballMesh = createBallMesh(new THREE.Color().setHSL (Math.random(), .9, .4));
@@ -173,12 +206,16 @@ function init() {
   pucks.push(puck2);
 	   
   ballMesh = createBallMesh (new THREE.Color().setHSL (Math.random(), .9, .4));
-  let puck3 = new Puck (new THREE.Vector3(-70,2,-120), new THREE.Vector3(40,0,0), ballMesh);
+  let puck3 = new Puck (new THREE.Vector3(-70,2,-120), new THREE.Vector3(40,0,50), ballMesh);
   pucks.push(puck3);
 	   
   ballMesh = createBallMesh (new THREE.Color().setHSL (Math.random(), .9, .4));
-  let puck4 = new Puck (new THREE.Vector3(100,2,100), new THREE.Vector3(0,0,40), ballMesh);
+  let puck4 = new Puck (new THREE.Vector3(100,2,100), new THREE.Vector3(50,0,40), ballMesh);
   pucks.push(puck4);
+
+  let biglight = new THREE.PointLight(new THREE.Color().setHSL(0, 0, 0.9), 0.7);
+  biglight.position.set(0, 50, 0);
+  scene.add(biglight);
 
 }
 
