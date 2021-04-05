@@ -177,10 +177,10 @@ function addMarkerHiro(){
 		'https://imgur.com/AmYBbIP.jpg',
 		
 		function(texture){
-			rollButton = new Button(halfW/2, -halfH/2, buttonSize, 'yellow', texture);
+			rollButton = new Button(-halfW/2, -halfH/2, buttonSize, 'yellow', texture);
 			sceneHUD.add(rollButton.mesh);
 			pickables.push(rollButton.mesh);
-		}
+		},
 	);
 	
 	group = new THREE.Group();
