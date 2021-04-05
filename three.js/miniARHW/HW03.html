@@ -174,7 +174,7 @@ function addMarkerHiro(){
 	let loader = new THREE.TextureLoader();
 	loader.setCrossOrigin('');
 	loader.load(
-		'https://imgur.com/AmYBbIP.jpg',
+		'https://i.imgur.com/AmYBbIP.jpg',
 		
 		function(texture){
 			rollButton = new Button(-halfW/2, -halfH/2, buttonSize, 'yellow', texture);
@@ -247,7 +247,7 @@ function animate() {
 	
 	renderer.clear();
 	renderer.render(scene, camera);
-	rollButton.mesh.material.visible = markerRoot.visible;
+	//rollButton.mesh.material.visible = markerRoot.visible;
 	renderer.render(sceneHUD, cameraHUD);
 	
 	var dt = 0.2;
