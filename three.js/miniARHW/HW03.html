@@ -125,7 +125,7 @@ function init() {
 		'https://i.imgur.com/AmYBbIP.jpg',
 		
 		function(texture){
-			TwoDButton = new Button(-halfW/2, -halfH/2, buttonSize, 'yellow', texture);
+			TwoDButton = new Button(halfW/2, -halfH/2, buttonSize, 'yellow', texture);
 			sceneHUD.add(TwoDButton.mesh);
 			pickables.push(TwoDButton.mesh);
 		},
@@ -279,8 +279,7 @@ function animate() {
 
 function onMouseDown(event){
 	event.preventDefault();
-	
-	var touches = event.changedTouches;
+
 	mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
 	mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 	
