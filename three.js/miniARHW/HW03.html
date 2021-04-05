@@ -247,7 +247,7 @@ function animate() {
 	
 	renderer.clear();
 	renderer.render(scene, camera);
-	rollButton.material.visible = markerRoot.visible;
+	rollButton.mesh.material.visible = markerRoot.visible;
 	renderer.render(sceneHUD, cameraHUD);
 	
 	rollButton.mesh.material.visible = markerRoot.visible;
