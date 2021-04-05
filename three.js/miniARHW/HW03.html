@@ -281,29 +281,40 @@ function onMouseDown(event){
 	event.preventDefault();
 	
 	var touches = event.changedTouches;
-	for(var i = 0; i < touches.length; i++){
-		mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-		mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+	mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+	mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+	
+	raycaster.setFromCamera(mouse, cameraHUD);
 		
-		raycaster.setFromCamera(mouse, cameraHUD);
-		
-		var intersection = raycaster.intersectObjects(pickables);
-		if(intersection.length > 0){
-			console.log('picked');
-			isActive = true;
-		}
-		else{
-			console.log('no hit');
-			isActive = false;
-		}
+	var intersection = raycaster.intersectObjects(pickables);
+	if(intersection.length > 0){
+		console.log('picked');
+		isActive = true;
+	}
+	else{
+		console.log('no hit');
+		isActive = false;
 	}
 }
 
 function onMouseUp(event){
 	isActive = false;
-	var touches = event.changedTouches;
-	for (var i = 0; i < touches.length; i++) {
-		isActive = false;
+}
+
+function touches (event) {
+	event.preventDefault();
+	mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+	mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+	// find intersections (only pick the HUD scene, using OrthographicCamera)  		
+	raycaster.setFromCamera(mouse, cameraHUD);
+				
+	var intersection = raycaster.intersectObjects(pickables);
+	if (intersection.length > 0) {
+		console.log ('picked')
+		isActive = !isActive;
+	} else {
+		console.log ('no hit')
 	}
 }
 
