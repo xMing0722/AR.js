@@ -171,6 +171,9 @@ function addMarkerHiro(){
 		patternUrl : THREEx.ArToolkitContext.baseURL + '../data/data/patt.hiro'
 	})
 	
+	var loader = new THREE.TextureLoader();
+	loader.setCrossOrigin('');
+	
 	let loader = new THREE.TextureLoader();
 	loader.setCrossOrigin('');
 	loader.load(
@@ -250,9 +253,6 @@ function animate() {
 	rollButton.mesh.material.visible = markerRoot.visible;
 	renderer.render(sceneHUD, cameraHUD);
 	
-	rollButton.mesh.material.visible = markerRoot.visible;
-	
-
 	var dt = 0.2;
     var maxOmega = 10;
 	
