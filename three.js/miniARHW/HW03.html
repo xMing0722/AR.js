@@ -46,7 +46,8 @@ var whRatio = window.innerWidth / window.innerHeight;
 var halfH = 10;
 var halfW = halfH * whRatio;
 var buttonSize = halfH/3;
-var rollButton;
+var TwoDButton;
+var mouse = new THREE.Vector2();
 
 class Button{
 	constructor(cx, cy, size, colorString = 'yellow', map){
@@ -118,6 +119,18 @@ function init() {
 	sceneHUD = new THREE.Scene();
 	cameraHUD = new THREE.OrthographicCamera(-halfW, halfW, halfH, -halfH, -10, 10);
 	
+	let loader = new THREE.TextureLoader();
+	loader.setCrossOrigin('');
+	loader.load(
+		'https://i.imgur.com/AmYBbIP.jpg',
+		
+		function(texture){
+			TwoDButton = new Button(-halfW/2, -halfH/2, buttonSize, 'yellow', texture);
+			sceneHUD.add(TwoDButton.mesh);
+			pickables.push(TwoDButton.mesh);
+		},
+	);
+	
 	////////////////////////////////////////////////////////////////////////////////
 	//          handle arToolkitSource
 	////////////////////////////////////////////////////////////////////////////////
@@ -170,19 +183,7 @@ function addMarkerHiro(){
 		type : 'pattern',
 		patternUrl : THREEx.ArToolkitContext.baseURL + '../data/data/patt.hiro'
 	})
-	
-	let loader = new THREE.TextureLoader();
-	loader.setCrossOrigin('');
-	loader.load(
-		'https://i.imgur.com/AmYBbIP.jpg',
-		
-		function(texture){
-			rollButton = new Button(-halfW/2, -halfH/2, buttonSize, 'yellow', texture);
-			sceneHUD.add(rollButton.mesh);
-			pickables.push(rollButton.mesh);
-		},
-	);
-	
+
 	group = new THREE.Group();
 	
 	let geometry0 = new THREE.CircleGeometry(1.388, 32, Math.PI/2, 2*Math.PI/3);
@@ -247,7 +248,7 @@ function animate() {
 	
 	renderer.clear();
 	renderer.render(scene, camera);
-	//rollButton.mesh.material.visible = markerRoot.visible;
+	TwoDButton.mesh.material.visible = markerRoot.visible;
 	renderer.render(sceneHUD, cameraHUD);
 	
 	var dt = 0.2;
@@ -278,39 +279,31 @@ function animate() {
 
 function onMouseDown(event){
 	event.preventDefault();
-	mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-	mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 	
-	raycaster.setFromCamera(mouse, cameraHUD);
-	
-	var intersection = raycaster.intersectObjecys(pickables);
-	if(intersects.length > 0){
-		console.log('picked');
-		isActive = !isActive;
-	}
-	else{
-		console.log('no hit');
+	var touches = event.changedTouches;
+	for(var i = 0; i < touches.length; i++){
+		mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+		mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+		
+		raycaster.setFromCamera(mouse, cameraHUD);
+		
+		var intersection = raycaster.intersectObjects(pickables);
+		if(intersection.length > 0){
+			console.log('picked');
+			isActive = true;
+		}
+		else{
+			console.log('no hit');
+			isActive = false;
+		}
 	}
 }
 
 function onMouseUp(event){
 	isActive = false;
-}
-
-function touches(event){
-	event.preventDefault();
-	mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-	mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-	
-	raycaster.setFromCamera(mouse, cameraHUD);
-	
-	var intersection = raycaster.intersectObjecys(pickables);
-	if(intersects.length > 0){
-		console.log('picked');
-		isActive = !isActive;
-	}
-	else{
-		console.log('no hit');
+	var touches = event.changedTouches;
+	for (var i = 0; i < touches.length; i++) {
+		isActive = false;
 	}
 }
 
