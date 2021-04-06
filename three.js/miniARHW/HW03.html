@@ -77,13 +77,16 @@ init();
 animate();
 
 function init() {
-
-	var _iOSDevice = !!navigator.platform.match(/iPhone|iPad|iPod/);
 	
-	if(_iOSDevice){
+	if(!!navigator.platform.match(/iPhone|iPad|iPod/)){
 		$('#text').css ('color', 'black');
 		document.addEventListener('touchstart', onMouseDown, false);
-		document.addEventListener('touchend'. onMouseUp, false);
+		document.addEventListener('touched', onMouseUp, false);
+	}
+	else if(!!navigator.platform.match(/Android/)){
+		$('#text').css ('color', 'black');
+		document.addEventListener('touchstart', onMouseDown, false);
+		document.addEventListener('touched', onMouseUp, false);
 	}
 	else{
 		$('#text').css('color', 'black');
@@ -258,7 +261,7 @@ function animate() {
   	    omega = omega + 10*dt;  
     }
 	else {
-    	omega = omega - 0.5*dt;
+    	omega = omega - 5*dt;
     }
 	
 	omega = clamp (omega, 0, maxOmega);
