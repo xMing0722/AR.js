@@ -88,6 +88,10 @@ class Button{
 	d2To(v){
 		return Math.sqrt((v[0] - this.centerX) * (v[0] - this.centerX) + (v[1]-this.centerY) * (v[1]-this.centerY));
 	}
+	
+	dInfTo(v){
+		return Math.max(Math.abs(v[0] - this.centerX), Math.abs(v[1] - this.centerY));
+	}
 }
 
 init();
@@ -95,20 +99,20 @@ animate();
 
 function init() {
 	
-	var machineDevice = !!navigator.platform.match(/iPhone|iPad|iPod|Android/);
+	var machineDevice = null;
 	console.log(machineDevice);
 	if(!!navigator.platform.match(/iPhone|iPad|iPod/)){
-		$('#deviceData').css ('color', 'black');
-		window.addEventListener('touchstart', onMouseDown, false);
+		$('#deviceData').html('<p id="deviceData" style ="color:yellow;text-align:center;"> iOS System </p>');
+		window.addEventListener('touchstart', touches, false);
 		window.addEventListener('touchend', onMouseUp, false);
 	}
 	else if(!!navigator.platform.match(/Android/)){
-		$('#deviceData').css ('color', 'green');
-		window.addEventListener('touchstart', onMouseDown, false);
+		$('#deviceData').html('<p id="deviceData" style ="color:yellow;text-align:center;"> Android System </p>');
+		window.addEventListener('touchstart', touches, false);
 		window.addEventListener('touchend', onMouseUp, false);
 	}
 	else{
-		$('#deviceData').css('color', 'red');
+		$('#deviceData').html('<p id="deviceData" style ="color:yellow;text-align:center;"> Other System </p>');
 		window.addEventListener('mousedown', onMouseDown, false);
 		window.addEventListener('mouseup', onMouseUp, false);
 	}
@@ -277,10 +281,10 @@ function animate() {
     var maxOmega = 10;
 	
 	if (isActive) {
-  	    omega = omega + 10*dt;  
+  	    omega = omega + 5 * dt;  
     }
 	else {
-    	omega = omega - 5*dt;
+    	omega = omega - 5 * dt;
     }
 	
 	omega = clamp (omega, 0, maxOmega);
@@ -303,6 +307,17 @@ function animate() {
 	
     group.rotation.y = angle;
 	renderer.render (scene, camera);	
+}
+
+function pickCompute(ndcX, ndcY){
+	let dist = TwoDButton.dInfTo ([halfW * ndcX, halfH * ndcY]);	
+	
+	if (dist < TwoDButton.size/2) {
+		console.log ('picked');
+		isActive = !isActive;
+	} else {
+		console.log ('no hit')
+	}
 }
 
 function onMouseDown(event){
@@ -328,20 +343,13 @@ function onMouseUp(event){
 	isActive = false;
 }
 
-function touches (event) {
-	event.preventDefault();
-	mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-	mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-	// find intersections (only pick the HUD scene, using OrthographicCamera)  		
-	raycaster.setFromCamera(mouse, cameraHUD);
-				
-	var intersection = raycaster.intersectObjects(pickables);
-	if (intersection.length > 0) {
-		console.log ('picked')
-		isActive = !isActive;
-	} else {
-		console.log ('no hit')
+function touches(event) {
+	if(event.touches.length == 1){
+		event.preventDefault();
+		let ndcX = ( event.touches[0].pageX / window.innerWidth ) * 2 - 1;
+		let ndcY = - ( event.touches[0].pageY / window.innerHeight ) * 2 + 1;
+		
+		pickCompute (ndcX, ndcY);
 	}
 }
 
