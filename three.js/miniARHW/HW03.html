@@ -14,9 +14,9 @@
 #spincolor{
 	position: absolute;
 	top: 60px;
-	width: 30%;
+	width: 20%;
 	text-align: center;
-	font-size: 30px;
+	font-size: 40px;
 	line-height: 10px;
 	z-index: -1;
 	color: #FF0000;
@@ -37,7 +37,7 @@
 </div>
 <div id="spincolor">
   <p id="text" style="color:red">
-    Red
+    ColorHere
   </p>
 
 <script>
@@ -290,10 +290,13 @@ function animate() {
   
     if(colorCal >= ((1/3)*Math.PI) && colorCal < Math.PI)
   	    $('#text').css ('color', '#00FF00');
+		$('#text').html('<p id = "text" style = "color: #00FF00;"> Green </p>');
     else if(colorCal >= Math.PI && colorCal < ((5/3) * Math.PI))
 		$('#text').css ('color', '#00FFFF'); 
+		$('#text').html('<p id = "text" style = "color: #00FFFF;"> Blue </p>');
     else
         $('#text').css ('color', 'red');
+		$('#text').html('<p id = "text" style = "color: red;"> Red </p>');
 	
     group.rotation.y = angle;
 	renderer.render (scene, camera);	
