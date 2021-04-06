@@ -288,15 +288,18 @@ function animate() {
 	
     var colorCal = angle % (2 * Math.PI);
   
-    if(colorCal >= ((1/3)*Math.PI) && colorCal < Math.PI)
+    if(colorCal >= ((1/3)*Math.PI) && colorCal < Math.PI){
   	    $('#text').css ('color', '#00FF00');
 		$('#text').html('<p id = "text" style = "color: #00FF00;"> Green </p>');
-    else if(colorCal >= Math.PI && colorCal < ((5/3) * Math.PI))
+	}
+    else if(colorCal >= Math.PI && colorCal < ((5/3) * Math.PI)){
 		$('#text').css ('color', '#00FFFF'); 
 		$('#text').html('<p id = "text" style = "color: #00FFFF;"> Blue </p>');
-    else
+	}
+    else{
         $('#text').css ('color', 'red');
 		$('#text').html('<p id = "text" style = "color: red;"> Red </p>');
+	}
 	
     group.rotation.y = angle;
 	renderer.render (scene, camera);	
