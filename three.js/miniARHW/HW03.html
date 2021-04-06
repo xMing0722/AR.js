@@ -81,12 +81,12 @@ function init() {
 	if(!!navigator.platform.match(/iPhone|iPad|iPod/)){
 		$('#text').css ('color', 'black');
 		document.addEventListener('touchstart', onMouseDown, false);
-		document.addEventListener('touched', onMouseUp, false);
+		document.addEventListener('touchend', onMouseUp, false);
 	}
 	else if(!!navigator.platform.match(/Android/)){
 		$('#text').css ('color', 'black');
 		document.addEventListener('touchstart', onMouseDown, false);
-		document.addEventListener('touched', onMouseUp, false);
+		document.addEventListener('touchend', onMouseUp, false);
 	}
 	else{
 		$('#text').css('color', 'black');
