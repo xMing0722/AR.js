@@ -102,17 +102,17 @@ function init() {
 	var machineDevice = null;
 	console.log(machineDevice);
 	if(!!navigator.platform.match(/iPhone|iPad|iPod/)){
-		$('#deviceData').html('<p id="deviceData" style ="color:yellow;text-align:center;"> iOS System </p>');
+		$('#deviceData').html('<p id="deviceData" style ="color:yellow;text-align:center;"> iOS Device </p>');
 		window.addEventListener('touchstart', touches, false);
 		window.addEventListener('touchend', onMouseUp, false);
 	}
 	else if(!!navigator.platform.match(/Android/)){
-		$('#deviceData').html('<p id="deviceData" style ="color:yellow;text-align:center;"> Android System </p>');
+		$('#deviceData').html('<p id="deviceData" style ="color:yellow;text-align:center;"> Android Device </p>');
 		window.addEventListener('touchstart', touches, false);
 		window.addEventListener('touchend', onMouseUp, false);
 	}
 	else{
-		$('#deviceData').html('<p id="deviceData" style ="color:yellow;text-align:center;"> Other System </p>');
+		$('#deviceData').html('<p id="deviceData" style ="color:yellow;text-align:center;"> Other Device </p>');
 		window.addEventListener('mousedown', onMouseDown, false);
 		window.addEventListener('mouseup', onMouseUp, false);
 	}
