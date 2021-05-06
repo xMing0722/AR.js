@@ -256,8 +256,7 @@ function pickCompute(ndcX, ndcY){
 	let dist = TwoDButton.dInfTo ([halfW * ndcX, halfH * ndcY]);	
 	
 	if (dist < TwoDButton.size/2) {
-		console.log ('picked');
-		isActive = !isActive;
+		setTimeout(spriteAnimate, 0);
 	} else {
 		console.log ('no hit')
 	}
@@ -273,8 +272,7 @@ function onMouseDown(event){
 		
 	var intersection = raycaster.intersectObjects(pickables);
 	if(intersection.length > 0){
-		console.log('picked');
-		isActive = true;
+		setTimeout(spriteAnimate, 0);
 	}
 	else{
 		console.log('no hit');
