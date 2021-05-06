@@ -177,7 +177,7 @@ function makeParabola(a, b, c){
   
   let geometry = new THREE.BufferGeometry().setFromPoints(points);
   let parabola = new THREE.Line (geometry, new THREE.LineDashedMaterial({color:'cyan'}));
-  parabola.computeLineDistances(); // required for LineDashedMaterial
+  parabola.computeLineDistances(); // required for LineDashedMaterial :)
   return parabola;
 }
 
