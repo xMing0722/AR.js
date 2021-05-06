@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+<!-- three.js library -->
+<script src='../examples/vendor/three.js/build/three.min.js'></script>
+<script src="../examples/vendor/three.js/examples/js/libs/stats.min.js"></script>
+<!-- ar.js -->
+<script src="../build/ar.js"></script>
+<script>THREEx.ArToolkitContext.baseURL = '../'</script>
+<head>
+<title> miniAR HW03 </title>
+<style>
+#spincolor{
+	position: absolute;
+	top: 60px;
+	width: 20%;
+	text-align: center;
+	font-size: 40px;
+	line-height: 10px;
+	z-index: -1;
+	color: #FF0000;
+	background-color: #888888;
+}
+</style>
+</head>
+<body style='margin : 0px; overflow: hidden; font-family: Monospace;'>
+
+<script src="https://threejs.org/build/three.min.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<div id="info">
+  <p id="deviceData" style ="color:white;text-align:center;">
+    DeviceData
+  </p>
+</div>
+
+<script>
+
+// global variables
+var renderer, scene, camera;
+var stats;
+var arToolKitSource, arToolKitContext;
+var markerHiro, markerRoot;
+
+var isActive = false;
+var raycaster = new THREE.Raycaster();
+var pickables = [];
+var sceneHUD;
+var cameraHUD;
+var whRatio = window.innerWidth / window.innerHeight;
+var halfH = 10;
+var halfW = halfH * whRatio;
+var buttonSize = halfH/3;
+var TwoDButton;
+var mouse = new THREE.Vector2();
+
+class Button{
+	constructor(cx, cy, size, colorString = 'yellow', map){
+		this.centerX = cx;
+		this.centerY = cy;
+		this.size = size;
+		let material = new THREE.MeshBasicMaterial({color: colorString, transparent: true, opacity:0.7});
+		
+		if(map){
+			material.map = map;
+		}
+		
+		this.mesh = new THREE.Mesh(new THREE.CircleGeometry(size, 36), material);
+		this.mesh.position.set(cx, cy, 0);
+	}
+	
+	setLocation(lx, ly){
+		this.mesh.position.set(lx, ly, 0);
+	}
+	
+	d2To(v){
+		return Math.sqrt((v[0] - this.centerX) * (v[0] - this.centerX) + (v[1]-this.centerY) * (v[1]-this.centerY));
+	}
+	
+	dInfTo(v){
+		return Math.max(Math.abs(v[0] - this.centerX), Math.abs(v[1] - this.centerY));
+	}
+}
+
+init();
+animate();
+
+function init() {
+	
+	var machineDevice = null;
+	console.log(machineDevice);
+	if(!!navigator.platform.match(/iPhone|iPad|iPod/)){
+		$('#deviceData').html('<p id="deviceData" style ="color:yellow;text-align:center;"> iOS Device </p>');
+		window.addEventListener('touchstart', touches, false);
+		window.addEventListener('touchend', onMouseUp, false);
+	}
+	else if(!!navigator.platform.match(/Android/)){
+		$('#deviceData').html('<p id="deviceData" style ="color:yellow;text-align:center;"> Android Device </p>');
+		window.addEventListener('touchstart', touches, false);
+		window.addEventListener('touchend', onMouseUp, false);
+	}
+	else{
+		$('#deviceData').html('<p id="deviceData" style ="color:yellow;text-align:center;"> Other Device </p>');
+		window.addEventListener('mousedown', onMouseDown, false);
+		window.addEventListener('mouseup', onMouseUp, false);
+	}
+
+	// init renderer
+	renderer	= new THREE.WebGLRenderer({
+		// antialias	: true,
+		alpha: true
+	});
+	renderer.autoClear = false;
+	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
+	// renderer.setPixelRatio( 1/2 );
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	renderer.domElement.style.position = 'absolute'
+	renderer.domElement.style.top = '0px'
+	renderer.domElement.style.left = '0px'
+	document.body.appendChild( renderer.domElement );
+
+	stats = new Stats();
+	document.body.appendChild( stats.dom );
+
+	// init scene and camera
+	scene	= new THREE.Scene();
+	
+	// Create a BASIC camera
+	camera = new THREE.Camera();
+	scene.add(camera);
+	
+	// 2D button scene
+	sceneHUD = new THREE.Scene();
+	cameraHUD = new THREE.OrthographicCamera(-halfW, halfW, halfH, -halfH, -10, 10);
+	
+	let loader = new THREE.TextureLoader();
+	loader.setCrossOrigin('');
+	loader.load(
+		'https://i.imgur.com/b6I5kb7.png',
+		
+		function(texture){
+			TwoDButton = new Button(halfW/2, -halfH/2, buttonSize, 'yellow', texture);
+			sceneHUD.add(TwoDButton.mesh);
+			pickables.push(TwoDButton.mesh);
+		},
+	);
+	
+	////////////////////////////////////////////////////////////////////////////////
+	//          handle arToolkitSource
+	////////////////////////////////////////////////////////////////////////////////
+
+	arToolkitSource = new THREEx.ArToolkitSource({
+		// to read from the webcam 
+		sourceType : 'webcam',
+	})
+
+	arToolkitSource.init(function onReady(){
+		onResize()
+	})
+	
+	// handle resize
+	window.addEventListener('resize', function(){
+		onResize()
+	})
+	function onResize(){
+		arToolkitSource.onResize()	
+		arToolkitSource.copySizeTo(renderer.domElement)	
+		if( arToolkitContext.arController !== null ){
+			arToolkitSource.copySizeTo(arToolkitContext.arController.canvas)	
+		}	
+	}
+	////////////////////////////////////////////////////////////////////////////////
+	//          initialize arToolkitContext
+	////////////////////////////////////////////////////////////////////////////////
+	
+	arToolkitContext = new THREEx.ArToolkitContext({
+		cameraParametersUrl: THREEx.ArToolkitContext.baseURL + '../data/data/camera_para.dat',
+		detectionMode: 'mono',
+		maxDetectionRate: 30,
+		canvasWidth: 80*3,
+		canvasHeight: 60*3,
+	})
+	// initialize it
+	arToolkitContext.init(function onCompleted(){
+		// copy projection matrix to camera
+		camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
+	})
+
+	markerHiro = addMarkerHiro();
+	scene.add(markerHiro);
+	initSprite(markerHiro);
+}
+	
+function addMarkerHiro(){
+
+	markerRoot = new THREE.Group();
+	var artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
+		type : 'pattern',
+		patternUrl : THREEx.ArToolkitContext.baseURL + '../data/data/bombTarget.patt'
+	})
+    let loader = new THREE.TextureLoader();
+	loader.setCrossOrigin('')
+	let texture = loader.load( 'https://i.imgur.com/FoevTzs.png' );
+	let geometry = new THREE.PlaneGeometry(1, 1);
+    let material = new THREE.MeshBasicMaterial( { 
+		map: texture,
+		//color: 0xffff00,
+		side: THREE.DoubleSide
+    } );
+    let plane = new THREE.Mesh( geometry, material );
+	plane.rotation.x = Math.PI/2;
+    markerRoot.add( plane );
+	return markerRoot;
+	
+	var grid = new THREE.GridHelper (1, 20, 'red', 'white');
+	//markerRoot.add (grid);
+			
+	return markerRoot;
+}
+
+function clamp (x, xLo, xHi) {
+  if (x < xLo) return xLo;
+  if (x > xHi) return xHi;
+  else return x;
+}
+
+function animate() {
+	requestAnimationFrame (animate);
+	stats.update();
+	
+	if( arToolkitSource.ready === false )	return
+	arToolkitContext.update( arToolkitSource.domElement )
+	
+	renderer.clear();
+	renderer.render (scene, camera);
+	TwoDButton.mesh.material.visible = markerRoot.visible;
+	renderer.render (sceneHUD, cameraHUD);
+
+	let localCamera = markerHiro.worldToLocal (new THREE.Vector3(0,0,0))
+	// CYLINDRICAL billboard:
+	
+	// to rotate (0,0,1) to localCamera [markerCoord]
+	let point = new THREE.Vector3(0,0,1);
+	let angle = point.angleTo (localCamera);
+	let axis = new THREE.Vector3();
+	axis.crossVectors(point, localCamera).normalize(); // normalization is IMPORTANT!
+	let hulkGroup = markerHiro.children[1];
+	hulkGroup.quaternion.setFromAxisAngle (axis, angle);
+	
+}
+
+function pickCompute(ndcX, ndcY){
+	let dist = TwoDButton.dInfTo ([halfW * ndcX, halfH * ndcY]);	
+	
+	if (dist < TwoDButton.size/2) {
+		console.log ('picked');
+		isActive = !isActive;
+	} else {
+		console.log ('no hit')
+	}
+}
+
+function onMouseDown(event){
+	event.preventDefault();
+
+	mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+	mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+	
+	raycaster.setFromCamera(mouse, cameraHUD);
+		
+	var intersection = raycaster.intersectObjects(pickables);
+	if(intersection.length > 0){
+		console.log('picked');
+		isActive = true;
+	}
+	else{
+		console.log('no hit');
+		isActive = false;
+	}
+}
+
+function onMouseUp(event){
+	isActive = false;
+}
+
+function touches(event) {
+	if(event.touches.length == 1){
+		event.preventDefault();
+		let ndcX = ( event.touches[0].pageX / window.innerWidth ) * 2 - 1;
+		let ndcY = - ( event.touches[0].pageY / window.innerHeight ) * 2 + 1;
+		
+		pickCompute (ndcX, ndcY);
+	}
+}
+
+</script>
+</body>
+</html>
