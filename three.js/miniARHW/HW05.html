@@ -274,12 +274,17 @@ function addMarkerHiro(){
 function animate() {
 	requestAnimationFrame (animate);
 	stats.update();
+	
+	TwoDButton.mesh.material.visible = markerRoot.visible;
+	renderer.render(sceneHUD, cameraHUD);
+	
 	light.position.copy(ball.position.clone().add(new THREE.Vector3(0, 1, 0)));
 
 	if( arToolkitSource.ready === false )	return;
 	arToolkitContext.update( arToolkitSource.domElement );
 	renderer.clear();
 	renderer.render (scene, camera);
+	renderer.render(sceneHUD, cameraHUD);
 	/////////////////////////////////////
 	target.copy(markerHiro.worldToLocal(markerBoom.localToWorld(new THREE.Vector3(0,0,0))));
 	target.y = 0;
