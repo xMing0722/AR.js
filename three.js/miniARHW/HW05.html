@@ -254,7 +254,7 @@ function animate() {
 	}
 
 	if (pos.y < 0 && shoot == 1){
-		fire = 0;
+		shoot = 0;
 		computeInitPosVel();
 		console.log(ball.position.clone().sub(target).length());
 		if(ball.position.clone().sub(target).length() <= 1.5){
