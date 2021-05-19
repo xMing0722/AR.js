@@ -171,8 +171,9 @@ function makeParabola(a, b, c){
   for(let i = 0; i <= N; i++){
   	xi = x0 + i * dx;
     yi = a * (xi - b) * (xi - b) + c;
-    let tmp = new THREE.Vector3(xi * Math.cos(cannon.rotation.y), yi, xi * -Math.sin(cannon.rotation.y));
-    points.push(tmp.add(barrelPart.localToWorld(new THREE.Vector3(0, 5, 0))));
+    //let tmp = new THREE.Vector3(xi * Math.cos(cannon.rotation.y), yi, xi * -Math.sin(cannon.rotation.y));
+	//points.push(tmp.add(barrelPart.localToWorld(new THREE.Vector3(0, 2, 0))))
+    points.push(new THREE.Vector3(xi, yi, 0));
   }
   
   let geometry = new THREE.BufferGeometry().setFromPoints(points);
