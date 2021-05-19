@@ -58,71 +58,14 @@ var target;
 var q1, q2;
 var v = 3, g = 1, theta;
 var flag, shoot = 0;
-
-var device = 2;
-var sceneHUD;
-var cameraHUD;
-var mouse = new THREE.Vector2();
-var raycaster = new THREE.Raycaster();
-var whRatio = window.innerWidth / window.innerHeight;
-var halfH = 10;
-var halfW = halfH * whRatio;
-var buttonSize = halfH/3;
-var pickables = [];
-var TwoDButton;
-var isActive = false;
-
-class Button{
-	constructor(cx, cy, size, colorString = 'yellow', map){
-		this.centerX = cx;
-		this.centerY = cy;
-		this.size = size;
-		let material = new THREE.MeshBasicMaterial({color: colorString, transparent: true, opacity:0.7});
-		
-		if(map){
-			material.map = map;
-		}
-		
-		this.mesh = new THREE.Mesh(new THREE.CircleGeometry(size, 36), material);
-		this.mesh.position.set(cx, cy, 0);
-	}
-	
-	setLocation(lx, ly){
-		this.mesh.position.set(lx, ly, 0);
-	}
-	
-	d2To(v){
-		return Math.sqrt((v[0] - this.centerX) * (v[0] - this.centerX) + (v[1]-this.centerY) * (v[1]-this.centerY));
-	}
-	
-	dInfTo(v){
-		return Math.max(Math.abs(v[0] - this.centerX), Math.abs(v[1] - this.centerY));
-	}
-}
+var keyboard = new KeyboardState();
+var pressed = 0;
 
 init();
 animate();
 
 function init() {
 	// init renderer
-	
-	var machineDevice = null;
-	if(!!navigator.platform.match(/iPhone|iPad|iPod/)){
-	    var device = 0;
-		window.addEventListener('touchstart', touches, false);
-		window.addEventListener('touchend', onMouseUp, false);
-	}
-	else if(!!navigator.platform.match(/Android/)){
-		var device = 1;
-		window.addEventListener('touchstart', touches, false);
-		window.addEventListener('touchend', onMouseUp, false);
-	}
-	else{
-	    var device = 2;
-		window.addEventListener('mousedown', onMouseDown, false);
-		window.addEventListener('mouseup', onMouseUp, false);
-	}
-	
 	renderer	= new THREE.WebGLRenderer({
 		// antialias	: true,
 		alpha: true
@@ -190,20 +133,7 @@ function init() {
 	scene.add (markerBoom); 
 	initSprite(markerBoom);
 	//////////// settings /////////////////////////////////////////////
-	sceneHUD = new THREE.Scene();
-	cameraHUD = new THREE.OrthographicCamera(-halfW, halfW, halfH, -halfH, -10, 10);
 	
-	let loader = new THREE.TextureLoader();
-	loader.setCrossOrigin('');
-	loader.load(
-		'https://i.imgur.com/b6I5kb7.png',
-		
-		function(texture){
-			TwoDButton = new Button(halfW/2, -halfH/2, buttonSize, 'yellow', texture);
-			sceneHUD.add(TwoDButton.mesh);
-			pickables.push(TwoDButton.mesh);
-		},
-	);
 	
 }
 
@@ -274,17 +204,13 @@ function addMarkerHiro(){
 function animate() {
 	requestAnimationFrame (animate);
 	stats.update();
-	
-	TwoDButton.mesh.material.visible = markerRoot.visible;
-	renderer.render(sceneHUD, cameraHUD);
-	
+	keyboard.update();
 	light.position.copy(ball.position.clone().add(new THREE.Vector3(0, 1, 0)));
 
 	if( arToolkitSource.ready === false )	return;
 	arToolkitContext.update( arToolkitSource.domElement );
 	renderer.clear();
 	renderer.render (scene, camera);
-	renderer.render(sceneHUD, cameraHUD);
 	/////////////////////////////////////
 	target.copy(markerHiro.worldToLocal(markerBoom.localToWorld(new THREE.Vector3(0,0,0))));
 	target.y = 0;
@@ -310,8 +236,9 @@ function animate() {
 		q1.copy(q2);  // save current (old) orientation
 		counterN = 100;
 		counter = 0;
-		if(shoot == 0 && markerBoom.visible === true && keyboard.pressed("space")){
+		if(shoot == 0 && markerBoom.visible === true && pressed = 1){
 			shoot = 1;
+			pressed = 0;
 			computeInitPosVel();
     		markerHiro.add (ball);
 		}
@@ -420,37 +347,10 @@ function render() {
 	renderer.render(scene, camera);
 }
 
-function onMouseDown(event){
-	event.preventDefault();
-
-	mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-	mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-	
-	raycaster.setFromCamera(mouse, cameraHUD);
-		
-	var intersection = raycaster.intersectObjects(pickables);
-	if(intersection.length > 0){
-		isActive = true;
-	}
-	else{
-		isActive = false;
+function keyboardDetect(){
+	keyboard.update();
+	if(keyboard.pressed("space")){
+		pressed = 1;
 	}
 }
-
-function onMouseUp(event){
-	isActive = false;
-}
-
-function touches(event) {
-	if(event.touches.length == 1){
-		event.preventDefault();
-		let ndcX = ( event.touches[0].pageX / window.innerWidth ) * 2 - 1;
-		let ndcY = - ( event.touches[0].pageY / window.innerHeight ) * 2 + 1;
-		
-		pickCompute (ndcX, ndcY);
-	}
-}
-
-</script>
-</body>
-</html>
+</script></body>
