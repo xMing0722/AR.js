@@ -11,6 +11,7 @@
 <script src="https://threejs.org/build/three.min.js"></script>
 <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="https://jyunming-chen.github.io/tutsplus/js/KeyboardState.js"></script>
 <script src="explode.js"></script>
 
 <head>
@@ -140,26 +141,15 @@ function addMarkerBoom(){
 		type : 'pattern',
 		patternUrl : THREEx.ArToolkitContext.baseURL + '../data/data/bombTarget.patt'
 	})
-	/*let loader = new THREE.TextureLoader();
-	loader.setCrossOrigin('')
-	let texture = loader.load( 'https://i.imgur.com/FoevTzs.png' );
-	let geometry = new THREE.PlaneGeometry(1, 1);
-    let material = new THREE.MeshBasicMaterial( { 
-		map: texture,
-		//color: 0xffff00,
-		side: THREE.DoubleSide
-    } );
-    plane = new THREE.Mesh( geometry, material );
-	plane.rotation.x = Math.PI/2;
-    markerRoot.add( plane );*/
+
 	tower = new THREE.Group();
 	let cylindergeometry = new THREE.CylinderGeometry( 0.25, 0.25, 0.5, 80 );
-	let cylindermaterial = new THREE.MeshBasicMaterial( {color: 0xa19e9d} );
+	let cylindermaterial = new THREE.MeshBasicMaterial( {color: 0xFF0000} );
 	let cylinder = new THREE.Mesh( cylindergeometry, cylindermaterial );
 	tower.add( cylinder );
 	cylinder.position.set(0, 0.25, 0);
 	let conegeometry = new THREE.ConeGeometry( 0.27, 0.5, 80 );
-	let conematerial = new THREE.MeshBasicMaterial( {color: 0xed8282} );
+	let conematerial = new THREE.MeshBasicMaterial( {color: 0x0000FF} );
 	let cone = new THREE.Mesh( conegeometry, conematerial );
 	tower.add( cone );
 	cone.position.set(0, 0.75 , 0);
